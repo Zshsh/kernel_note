@@ -1,0 +1,247 @@
+if MACH_LOONGSON
+
+choice
+	prompt "Machine Type"
+
+config LS1A_MACH
+	bool "Loongson 1A board"
+	select BOOT_ELF32
+	select CEVT_R4K if ! MIPS_EXTERNAL_TIMER
+	select CSRC_R4K if ! MIPS_EXTERNAL_TIMER
+	select SYS_HAS_CPU_LOONGSON1A
+#	select CPU_HAS_WB
+	select DMA_NONCOHERENT
+	select HW_HAS_PCI
+	select IRQ_CPU
+	select SYS_HAS_EARLY_PRINTK
+	select SYS_SUPPORTS_32BIT_KERNEL
+	select SYS_SUPPORTS_HIGHMEM
+	select SYS_SUPPORTS_LITTLE_ENDIAN
+	help
+	  GZ Loongson 1A family machines utilize the ls232 revision of
+	  Loongson processor.
+
+config LS1B_MACH
+	bool "Loongson 1B board"
+	select BOOT_ELF32
+	select CEVT_R4K if ! MIPS_EXTERNAL_TIMER
+	select CSRC_R4K if ! MIPS_EXTERNAL_TIMER
+	select SYS_HAS_CPU_LOONGSON1B
+#	select CPU_HAS_WB
+	select DMA_NONCOHERENT
+	select IRQ_CPU
+	select SYS_HAS_EARLY_PRINTK
+	select SYS_SUPPORTS_32BIT_KERNEL
+	select SYS_SUPPORTS_HIGHMEM
+	select SYS_SUPPORTS_LITTLE_ENDIAN
+	help
+	  GZ Loongson 1B family machines utilize the ls232 revision of
+	  Loongson processor.
+
+config LS1C_MACH
+	bool "Loongson 1C board"
+	select BOOT_ELF32
+	select CEVT_R4K if ! MIPS_EXTERNAL_TIMER
+	select CSRC_R4K if ! MIPS_EXTERNAL_TIMER
+	select SYS_HAS_CPU_LOONGSON1C
+#	select CPU_HAS_WB
+	select DMA_NONCOHERENT
+	select IRQ_CPU
+	select SYS_HAS_EARLY_PRINTK
+	select SYS_SUPPORTS_32BIT_KERNEL
+	select SYS_SUPPORTS_HIGHMEM
+	select SYS_SUPPORTS_LITTLE_ENDIAN
+	select USB_ARCH_HAS_HCD
+	help
+	  GZ Loongson 1C family machines utilize the ls232 revision of
+	  Loongson processor.
+
+config LEMOTE_FULOONG2E
+	bool "Lemote Fuloong(2e) mini-PC"
+	select ARCH_SPARSEMEM_ENABLE
+	select CEVT_R4K
+	select CSRC_R4K
+	select SYS_HAS_CPU_LOONGSON2E
+	select DMA_NONCOHERENT
+	select BOOT_ELF32
+	select BOARD_SCACHE
+	select HW_HAS_PCI
+	select I8259
+	select ISA
+	select IRQ_CPU
+	select SYS_SUPPORTS_32BIT_KERNEL
+	select SYS_SUPPORTS_64BIT_KERNEL
+	select SYS_SUPPORTS_LITTLE_ENDIAN
+	select SYS_SUPPORTS_HIGHMEM
+	select SYS_HAS_EARLY_PRINTK
+	select GENERIC_ISA_DMA_SUPPORT_BROKEN
+	select CPU_HAS_WB
+	select LOONGSON_MC146818
+	help
+	  Lemote Fuloong(2e) mini-PC board based on the Chinese Loongson-2E CPU and
+	  an FPGA northbridge
+
+	  Lemote Fuloong(2e) mini PC have a VIA686B south bridge.
+
+config LEMOTE_MACH2F
+	bool "Lemote Loongson 2F family machines"
+	select ARCH_SPARSEMEM_ENABLE
+	select BOARD_SCACHE
+	select BOOT_ELF32
+	select CEVT_R4K if ! MIPS_EXTERNAL_TIMER
+	select CPU_HAS_WB
+	select CS5536
+	select CSRC_R4K if ! MIPS_EXTERNAL_TIMER
+	select DMA_NONCOHERENT
+	select GENERIC_ISA_DMA_SUPPORT_BROKEN
+	select HW_HAS_PCI
+	select I8259
+	select IRQ_CPU
+	select ISA
+	select SYS_HAS_CPU_LOONGSON2F
+	select SYS_HAS_EARLY_PRINTK
+	select SYS_SUPPORTS_32BIT_KERNEL
+	select SYS_SUPPORTS_64BIT_KERNEL
+	select SYS_SUPPORTS_HIGHMEM
+	select SYS_SUPPORTS_LITTLE_ENDIAN
+	select LOONGSON_MC146818
+	help
+	  Lemote Loongson 2F family machines utilize the 2F revision of
+	  Loongson processor and the AMD CS5536 south bridge.
+
+	  These family machines include fuloong2f mini PC, yeeloong2f notebook,
+	  LingLoong allinone PC and so forth.
+endchoice
+
+choice
+	prompt "LS1A board configure"
+	depends on LS1A_MACH
+	default LS1A_CORE_BOARD
+
+config	LS1A_CORE_BOARD
+	bool "ls1a_core_board"
+
+config	LS1A_CLOUD_TERMIAL
+	bool "ls1a_cloud_termial"
+endchoice
+
+choice
+	prompt "LS1B board configure"
+	depends on LS1B_MACH
+	default LS1B_BOARD
+
+config	LS1B_BOARD
+	bool "ls1b_board"
+
+config	LS1B_CORE_BOARD
+	bool "ls1b_core_board"
+endchoice
+
+
+
+config CS5536
+	bool
+
+config CS5536_MFGPT
+	bool "CS5536 MFGPT Timer"
+	depends on CS5536
+	select MIPS_EXTERNAL_TIMER
+	help
+	  This option enables the mfgpt0 timer of AMD CS5536.
+
+	  If you want to enable the Loongson2 CPUFreq Driver, Please enable
+	  this option at first, otherwise, You will get wrong system time.
+
+	  If unsure, say Yes.
+
+config LOONGSON_SUSPEND
+	bool
+	default y
+	depends on CPU_SUPPORTS_CPUFREQ && SUSPEND
+
+config LOONGSON_UART_BASE
+	bool
+	default y
+	depends on EARLY_PRINTK || SERIAL_8250
+
+config LOONGSON_MC146818
+	bool
+	default n
+
+config PCI_AUTO
+	bool "auto asign pci resource"
+	default y
+	depends on LS1A_MACH
+
+config DISABLE_PCI
+	bool "disable pci"
+	default n
+	depends on LS1A_MACH
+
+config LOONGSON_BIGPCI
+	bool 'use large pci memory'
+	default n
+	depends on LS1A_MACH
+
+config HAVE_PWM
+	bool "Enable PWM"
+	default n
+	depends on LS1A_MACH || LS1B_MACH || LS1C_MACH
+	help
+	  This option enable loongson 1a/1b cpu's pwm controller.
+	  Be careful, some module's Pin multiplexing with the pwm,
+	  as NAND GMAC and SPI.
+
+config LS1X_EXTERN_TIMER
+	bool "loongson 1A/1B Extern Timer"
+	default n
+	depends on LS1A_MACH || LS1B_MACH
+	help
+	  If you want to enable the Loongson1 CPUFreq Driver, Please enable
+	  this option at first, otherwise, You will get wrong system time.
+
+choice
+	prompt "Extern timer instead of mips timer for systerm"
+	depends on LS1X_EXTERN_TIMER
+	default LS1X_TIMER
+
+config	LS1X_HPET
+	bool "hpet timer of LS1A for system"
+	select MIPS_EXTERNAL_TIMER
+	depends on LS1A_MACH
+	help
+	  If you want to enable the Loongson1A CPUFreq Driver, Please enable
+	  this option at first, otherwise, You will get wrong system time.
+	  only for ls1a.
+
+config LS1X_TIMER
+	bool "loongson 1A/1B PWM Timer"
+	select MIPS_EXTERNAL_TIMER
+	depends on LS1A_MACH || LS1B_MACH
+	help
+	  If you want to enable the Loongson1 CPUFreq Driver, Please enable
+	  this option at first, otherwise, You will get wrong system time.
+
+	  If unsure, say Yes.
+endchoice
+
+choice
+	prompt  "system timer select for pwm-timer"
+	depends on LS1X_EXTERN_TIMER
+	depends on LS1X_TIMER
+	default TIMER_USE_PWM0
+
+config TIMER_USE_PWM0
+	bool "used pwm0 timer controller"
+
+config TIMER_USE_PWM1
+	bool "used pwm1 timer controller"
+
+config TIMER_USE_PWM2
+	bool "used pwm2 timer controller"
+
+config TIMER_USE_PWM3
+	bool "used pwm3 timer controller"
+endchoice
+
+endif # MACH_LOONGSON
